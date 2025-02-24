@@ -88,7 +88,8 @@ Use this component in [A-Frame](https://aframe.io), together with the [Networked
             template: "stackbeat_love-codesource-template",
             components: ["position", "text"],
           });
-        }```
+        }
+```
 
 ###### Commands:
 
