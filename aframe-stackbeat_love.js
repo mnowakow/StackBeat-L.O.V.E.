@@ -49,7 +49,7 @@ class stackbeatSynth {
     await console.log("wait...");
 
     await this.audioCtx.audioWorklet.addModule(
-      "./aframe-stackbeat_love/stackbeat-worker.js"
+      "./aframe-stackbeat/stackbeat-worker.js"
     );
 
     this.stackbeatWorker = new AudioWorkletNode(
@@ -111,43 +111,50 @@ function distance3d(vec1, vec2) {
 function CodeParser() {
   console.log("code parser");
 
-  for (let i = 0; i < sources.size; i++) {
+  Array.from(sources.keys()).forEach((sk) => {
+    //for (let i = 0; i < sources.size; i++) {
     //iterate distances with all sources
 
     let finalCode = "";
-
-    for (let j = 0; j < codes.size; j++) {
+    let srcCodes = new Map();
+    Array.from(codes.keys()).forEach((ck) => {
+      //for (let j = 0; j < codes.size; j++) {
       //iterate through all codes
-      let srcCodes = new Map();
 
-      let srcPos = sources.get("src" + i);
-      let codPos = codes.get("cod" + j);
+      //let srcPos = sources.get("src" + i);
+      //let codPos = codes.get("cod" + j);
+      let srcPos = sources.get(sk);
+      let codPos = codes.get(ck);
       let dist = distance3d(srcPos, codPos);
 
       if (dist <= 10) {
-        srcCodes.set(dist, "cod" + j);
+        //srcCodes.set(dist, "cod" + j);
+        srcCodes.set(dist, ck);
         let resultedCodes = [...srcCodes.entries()].sort();
         console.log(resultedCodes);
+        finalCode = "";
         for (const element of resultedCodes) {
           let el = document.getElementById(element[1]);
           let code = el.components.text.attrValue.value;
+          console.log("code:", code);
 
           if (code == "n") {
             console.log("number");
-            finalCode = finalCode + "" + Math.round(dist);
+            finalCode = finalCode + "" + Math.round(element[0]);
           } else {
             finalCode = finalCode + "" + code;
           }
         }
       }
-    }
+    });
 
-    let el = document.getElementById("src" + i);
-    el.setAttribute("stackbeat_love", { code: finalCode });
-  }
+    //let el = document.getElementById("src" + i);
+    let el = document.getElementById(sk);
+    el.setAttribute("stackbeat", { code: finalCode });
+  });
 }
 
-AFRAME.registerComponent("stackbeat_love", {
+AFRAME.registerComponent("stackbeat", {
   synth: null,
   schema: {
     code: { default: "Hello" },
@@ -191,7 +198,7 @@ AFRAME.registerComponent("stackbeat_love", {
 });
 
 /* global AFRAME, NAF */
-AFRAME.registerComponent("stackbeat_love-drop", {
+AFRAME.registerComponent("stackbeat-drop", {
   schema: {
     template: { default: "" },
     keyCode: { default: 48 },
@@ -217,7 +224,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-mainsource-template",
+        template: "#stackbeat-mainsource-template",
       });
       NAF.utils.getNetworkedEntity(el).then((networkedEl) => {
         document.body.dispatchEvent(
@@ -239,7 +246,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-codesource-template",
+        template: "#stackbeat-codesource-template",
       });
       el.setAttribute("text", { value: "_" });
 
@@ -263,7 +270,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-codesource-template",
+        template: "#stackbeat-codesource-template",
       });
       el.setAttribute("text", { value: "@" });
 
@@ -287,7 +294,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-codesource-template",
+        template: "#stackbeat-codesource-template",
       });
       el.setAttribute("text", { value: "$" });
 
@@ -311,7 +318,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-codesource-template",
+        template: "#stackbeat-codesource-template",
       });
       el.setAttribute("text", { value: "#" });
 
@@ -335,7 +342,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-codesource-template",
+        template: "#stackbeat-codesource-template",
       });
       el.setAttribute("text", { value: "~" });
 
@@ -359,7 +366,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-codesource-template",
+        template: "#stackbeat-codesource-template",
       });
       el.setAttribute("text", { value: "!" });
 
@@ -383,7 +390,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-codesource-template",
+        template: "#stackbeat-codesource-template",
       });
       el.setAttribute("text", { value: "+" });
 
@@ -407,7 +414,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-codesource-template",
+        template: "#stackbeat-codesource-template",
       });
       el.setAttribute("text", { value: "-" });
 
@@ -431,7 +438,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-codesource-template",
+        template: "#stackbeat-codesource-template",
       });
       el.setAttribute("text", { value: "*" });
 
@@ -455,7 +462,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-codesource-template",
+        template: "#stackbeat-codesource-template",
       });
       el.setAttribute("text", { value: "/" });
 
@@ -479,7 +486,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-codesource-template",
+        template: "#stackbeat-codesource-template",
       });
       el.setAttribute("text", { value: ">" });
 
@@ -503,7 +510,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-codesource-template",
+        template: "#stackbeat-codesource-template",
       });
       el.setAttribute("text", { value: "<" });
 
@@ -527,7 +534,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-codesource-template",
+        template: "#stackbeat-codesource-template",
       });
       el.setAttribute("text", { value: "^" });
 
@@ -551,7 +558,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-codesource-template",
+        template: "#stackbeat-codesource-template",
       });
       el.setAttribute("text", { value: "&" });
 
@@ -575,7 +582,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-codesource-template",
+        template: "#stackbeat-codesource-template",
       });
       el.setAttribute("text", { value: "|" });
 
@@ -599,7 +606,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-codesource-template",
+        template: "#stackbeat-codesource-template",
       });
       el.setAttribute("text", { value: "%" });
 
@@ -623,7 +630,7 @@ AFRAME.registerComponent("stackbeat_love-drop", {
       });
       el.setAttribute("networked", {
         persistent: true,
-        template: "#stackbeat_love-codesource-template",
+        template: "#stackbeat-codesource-template",
       });
       el.setAttribute("text", { value: "n" });
 
